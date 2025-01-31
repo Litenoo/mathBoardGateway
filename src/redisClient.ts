@@ -3,16 +3,16 @@ import Redis from "ioredis";
 import logger from "./logger";
 
 export default class RedisClient {
-    protected client: Redis|undefined;
+    protected client: Redis | undefined;
 
     constructor(
-        private subChannel: string,
-        private pubChannel: string,
+        private subChannel: string = "MB_BACKEND_GATEWAY",
+        private pubChannel: string = "MB_GATEWAY_BACKEND",
     ) {
         this.client = new Redis();
         this.client.subscribe(this.subChannel);
 
-        this.client?.on("message", (channel, message) =>{
+        this.client?.on("message", (channel, message) => {
             console.log(`Redis Pong; message: ${message}`);
         });
     }

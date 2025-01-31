@@ -23,10 +23,7 @@ describe("WebSocket Server Communication", () => {
    beforeEach(() => {
       socketClient = io(`http://localhost:${PORT}`, { reconnection: false });
    });
-
-   afterAll(() => {
-   });
-
+   
    afterEach(() => {
       socketClient.close();
    });
