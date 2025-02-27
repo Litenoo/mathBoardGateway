@@ -1,6 +1,7 @@
 import { Server as HTTPServer } from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import RedisClient from "./redisClient";
+import logger from "./logger";
 
 export default class WebSocketServer {
     private io: SocketIOServer;
@@ -21,13 +22,59 @@ export default class WebSocketServer {
                 console.log(`Client SOCKET[${socket.id}] disconnected.`);
             });
 
-            socket.onAny((event, request,...args) => {
-                
+            socket.onAny((event, request: Request) => {
+                switch (request.type) {
+                    case "board":
+                        this.passRequestViaRedis(request);
+                        //board mechanics
+                        break;
+                    case "ml":
+                        //ml request to backend
+                        break;
+                    case "account":
+                        //account logic
+                        break;
+                }
             });
         });
     }
 
-    public close() {
+    close() {
         this.io.close();
     }
+
+    passRequestViaRedis(request: Request) {
+        // if (!this.validateRequest(request)) {
+        //     logger.error(new Error(`Request is not valid, REQ: ${request}`));
+        // }
+        this.redisClient.publishRequest(request);
+    }
+
+    // validateRequest(data: any): data is Request {
+    //     return (
+    //         typeof data.type === "string" &&
+    //         typeof data.route === "string"
+    //     )
+    // }
+}
+
+//DEV - It will be moved to package later
+
+type Type = "board" | "account" | "ml";
+
+export interface Request { //dev
+    type: Type;
+    route: string;
+    request: any;
+}
+
+export interface registerRequest {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export interface loginRequest {
+    email: string;
+    password: string;
 }

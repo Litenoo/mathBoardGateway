@@ -1,4 +1,3 @@
-//Read more about socket.io-redis package, but it is probably useless in that case
 import Redis from "ioredis";
 import logger from "./logger";
 
@@ -23,4 +22,17 @@ export default class RedisClient {
             logger.info("RedisClient disconnected.");
         }
     }
+
+    publishRequest(request: Request) {
+        this.client?.publish("request", JSON.stringify(request));
+    }
+}
+
+//Dev - It wil be moved to package later
+type Type = "board" | "account" | "ml";
+
+export interface Request {
+    type: Type;
+    route: string;
+    request: any;
 }
